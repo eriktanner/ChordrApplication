@@ -1,0 +1,48 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.euna.chordr.FunctionsFragment">
+
+    <Button
+        android:id="@+id/cMajor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="C Major"
+        android:layout_marginStart="2dp"
+        tools:layout_constraintLeft_creator="1"
+        android:layout_marginLeft="2dp"
+        tools:layout_constraintTop_creator="1"
+        android:layout_marginTop="103dp" />
+
+    <Button
+        android:id="@+id/cSharpMajor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="C# Major"
+        android:layout_marginLeft="130dp"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1" />
+
+    <Button
+        android:id="@+id/bFragment1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="Fragment1"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintTop_creator="1" />
+
+    <Button
+        android:id="@+id/selectChord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="Select Chord"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintTop_creator="1" />
+
+</FrameLayout>
