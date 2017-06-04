@@ -1,5 +1,6 @@
 package com.euna.chordr
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.ArrayAdapter
@@ -12,7 +13,8 @@ class MainActivity : AppCompatActivity() {
 
     private var keyPicker: Spinner? = null
     private var modePicker: Spinner? = null
-    private var updateButton: Button? = null
+    private var bUpdate: Button? = null
+    private var bBack: Button? = null
     private var chordsDisplay: TextView? = null
 
     internal var chords = Chords()
@@ -26,7 +28,8 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun initializeFindByViews() {
-        updateButton = findViewById(R.id.updateButton) as Button
+        bUpdate = findViewById(R.id.updateButton) as Button
+        bBack = findViewById(R.id.bGoToLogin) as Button
         chordsDisplay = findViewById(R.id.chordsDisplay) as TextView
 
         keyPicker = findViewById(R.id.keyPicker) as Spinner
@@ -40,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun initializeOnClickListeners() {
-        updateButton!!.setOnClickListener {
+        bUpdate!!.setOnClickListener {
             var total = ""
             val key = keyPicker!!.selectedItem.toString()
             val chordsInKey: Array<String>
@@ -58,6 +61,11 @@ class MainActivity : AppCompatActivity() {
             }
 
             chordsDisplay!!.text = total
+        }
+
+        bBack!!.setOnClickListener {
+            val PageTransition = Intent(this, LoginActivity::class.java)
+            startActivity(PageTransition)
         }
     }
 }
