@@ -65,7 +65,7 @@ class LoginActivity : AppCompatActivity() {
         val keyAdapt = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, chords.notes)
         spKeyPicker!!.adapter = keyAdapt
         spKeyPicker!!.setSelection(keyPickerIndexSelected)
-        
+
         spScalePicker = findViewById(R.id.scalePicker) as Spinner
         val scaleAdapt = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, chords.scale)
         spScalePicker!!.adapter = scaleAdapt

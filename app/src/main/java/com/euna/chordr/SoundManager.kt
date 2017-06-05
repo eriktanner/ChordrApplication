@@ -32,6 +32,7 @@ class SoundManager {
 
     /* Plays the sound file corresponding to the resource id */
     fun playInstrument(context: Context, resID: Int) {
+        releaseMediaPlayer()
         mediaPlayer = MediaPlayer.create(context, resID)
         playMediaPlayer()
     }
