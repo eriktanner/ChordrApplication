@@ -1,11 +1,13 @@
 package com.euna.chordr;
 
 class Chords {
-    val modes = arrayOf("Major", "Minor")
+    val scale = arrayOf("Major", "Minor")
     val notes = arrayOf("A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#")
     val majChords = arrayOf("A maj", "A# maj", "B maj", "C maj", "C# maj", "D maj", "D# maj", "E maj", "F maj", "F# maj", "G maj", "G# maj")
     val minChords = arrayOf("A min", "A# min", "B min", "C min", "C# min", "D min", "D# min", "E min", "F min", "F# min", "G min", "G# min")
     val dimChords = arrayOf("A dim", "A# dim", "B dim", "C dim", "C# dim", "D dim", "D# dim", "E dim", "F dim", "F# dim", "G dim", "G# dim")
+
+
 
     fun getMajorScale(root: String): Array<String> {
         val root = notes.indexOf(root)
