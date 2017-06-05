@@ -3,10 +3,8 @@ package com.euna.chordr
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.Spinner
-import android.widget.TextView
+import android.view.View
+import android.widget.*
 
 
 /**
@@ -19,7 +17,6 @@ class LoginActivity : AppCompatActivity() {
     private var spScalePicker: Spinner? = null
 
     private var tvChordsDisplay: TextView? = null
-    private var bUpdate: Button? = null
     private var GoToMainButton: Button? = null
 
     internal var chords = Chords()
@@ -34,13 +31,11 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        bUpdate!!.performClick()
+        updateChordsInKey()
     }
-
 
     private fun initializeFindByViews() {
         tvChordsDisplay = findViewById(R.id.chordsDisplay) as TextView
-        bUpdate = findViewById(R.id.updateButton) as Button
         GoToMainButton = findViewById(R.id.bGoToMainActivity) as Button
 
         spKeyPicker = findViewById(R.id.keyPicker) as Spinner
@@ -52,9 +47,7 @@ class LoginActivity : AppCompatActivity() {
         spScalePicker = findViewById(R.id.scalePicker) as Spinner
         val scaleAdapt = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, chords.scale)
         spScalePicker!!.adapter = scaleAdapt
-
     }
-
 
     private fun initializeOnClickListeners() {
         GoToMainButton!!.setOnClickListener {
@@ -62,14 +55,27 @@ class LoginActivity : AppCompatActivity() {
             startActivity(PageTransition)
         }
 
-        bUpdate!!.setOnClickListener {
-            val key = spKeyPicker!!.selectedItem.toString()
-            val chordsInKey = findChordsInKey(key)
-            writeChordsInKey(chordsInKey)
+        spKeyPicker!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
+                updateChordsInKey()
+            }
+            override fun onNothingSelected(parent: AdapterView<out Adapter>?) {}
+        }
+
+        spScalePicker!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
+                updateChordsInKey()
+            }
+            override fun onNothingSelected(parent: AdapterView<out Adapter>?) {}
         }
 
     }
 
+    private fun updateChordsInKey() {
+        val key = spKeyPicker!!.selectedItem.toString()
+        val chordsInKey = findChordsInKey(key)
+        writeChordsInKey(chordsInKey)
+    }
 
     private fun findChordsInKey(scale: String) : Array<String> {
         val chordsInKey: Array<String>
@@ -84,13 +90,11 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun writeChordsInKey(arrayOfChordsInKey: Array<String>) {
-
         var chordString = ""
         for (i in arrayOfChordsInKey.indices) {
             chordString += arrayOfChordsInKey[i] + " "
         }
 
         tvChordsDisplay!!.text = chordString
-
     }
 }
