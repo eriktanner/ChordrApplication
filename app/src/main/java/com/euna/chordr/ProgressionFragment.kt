@@ -10,7 +10,7 @@ import android.view.ViewGroup
 
 
 /**
- * Progression Bar fragment of the MainActivity
+ * Progression Bar fragment of the LoginActivity
  */
 class ProgressionFragment : Fragment() {
 

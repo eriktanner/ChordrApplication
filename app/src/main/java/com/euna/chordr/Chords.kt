@@ -8,7 +8,6 @@ class Chords {
     val dimChords = arrayOf("A dim", "A# dim", "B dim", "C dim", "C# dim", "D dim", "D# dim", "E dim", "F dim", "F# dim", "G dim", "G# dim")
 
 
-
     fun getMajorScale(root: String): Array<String> {
         val root = notes.indexOf(root)
         val first = (root + 2) % notes.size

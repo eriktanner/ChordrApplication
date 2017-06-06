@@ -6,12 +6,100 @@
     android:layout_height="match_parent"
     tools:context="com.euna.chordr.MainActivity">
 
+    <TextView
+        android:id="@+id/chordsDisplay"
+        android:layout_width="265dp"
+        android:layout_height="35dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintVertical_bias="0.834" />
+
+    <Spinner
+        android:id="@+id/keyPicker"
+        android:layout_width="116dp"
+        android:layout_height="38dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.18"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.197" />
+
+    <Spinner
+        android:id="@+id/scalePicker"
+        android:layout_width="124dp"
+        android:layout_height="38dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.795"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.197"
+        tools:layout_editor_absoluteX="201dp"></Spinner>
+
+    <Spinner
+        android:id="@+id/firstChord"
+        android:layout_width="116dp"
+        android:layout_height="38dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.179"
+        app:layout_constraintVertical_bias="0.325"></Spinner>
+
+    <Spinner
+        android:id="@+id/secondChord"
+        android:layout_width="116dp"
+        android:layout_height="38dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.179"
+        app:layout_constraintVertical_bias="0.456"></Spinner>
+
+    <Spinner
+        android:id="@+id/thirdChord"
+        android:layout_width="116dp"
+        android:layout_height="38dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.179"
+        app:layout_constraintVertical_bias="0.591"></Spinner>
+
+    <Spinner
+        android:id="@+id/fourthChord"
+        android:layout_width="116dp"
+        android:layout_height="38dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.179"
+        app:layout_constraintVertical_bias="0.725"></Spinner>
+
     <Button
-        android:id="@+id/bGoToLogin"
+        android:id="@+id/playButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Back"
-        tools:layout_editor_absoluteX="29dp"
-        tools:layout_editor_absoluteY="446dp" />
+        android:text="Play"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.965" />
+
+    <Button
+        android:id="@+id/bGoToMainActivity"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:text="Main Page"
+        tools:layout_editor_absoluteY="5dp" />
 
 </android.support.constraint.ConstraintLayout>
