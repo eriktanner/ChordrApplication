@@ -1,7 +1,6 @@
 package com.euna.chordr
 
 import android.app.Activity
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -14,7 +13,7 @@ import android.widget.*
  */
 class MainActivity : AppCompatActivity() {
 
-    internal var stateState: SharedPreferences? = null
+    internal var savedState: SharedPreferences? = null
     internal val chords = Chords()
     internal val soundManager = SoundManager()
 
@@ -34,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        stateState = getPreferences(Activity.MODE_PRIVATE);
+        savedState = getPreferences(Activity.MODE_PRIVATE);
         setContentView(R.layout.activity_main)
         initializeFindByViews()
         initializeOnClickListeners()
@@ -47,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        val editor = stateState!!.edit()
+        val editor = savedState!!.edit()
         editor.putInt("keyPickerIndex", keyPickerIndexSelected)
         editor.putInt("scalePickerIndex", scalePickerIndexSelected)
         editor.commit()
@@ -55,15 +54,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        spKeyPicker!!.setSelection(stateState!!.getInt("keyPickerIndex", keyPickerIndexSelected));
-        spScalePicker!!.setSelection(stateState!!.getInt("scalePickerIndex", scalePickerIndexSelected));
+        spKeyPicker!!.setSelection(savedState!!.getInt("keyPickerIndex", keyPickerIndexSelected));
+        spScalePicker!!.setSelection(savedState!!.getInt("scalePickerIndex", scalePickerIndexSelected));
         updateChordsInKey()
     }
 
     private fun initializeFindByViews() {
         tvChordsDisplay = findViewById(R.id.chordsDisplay) as TextView
-        bGoToMainButton = findViewById(R.id.bGoToMainActivity) as Button
-        bPlayButton = findViewById(R.id.playButton) as Button
+        bPlayButton = findViewById(R.id.playButtonKeySelection) as Button
 
         spKeyPicker = findViewById(R.id.keyPicker) as Spinner
         val keyAdapt = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, chords.notes)
@@ -74,18 +72,9 @@ class MainActivity : AppCompatActivity() {
         val scaleAdapt = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, chords.scale)
         spScalePicker!!.adapter = scaleAdapt
         spScalePicker!!.setSelection(scalePickerIndexSelected)
-
-        firstChord = findViewById(R.id.firstChord) as Spinner
-        secondChord = findViewById(R.id.secondChord) as Spinner
-        thirdChord = findViewById(R.id.thirdChord) as Spinner
-        fourthChord = findViewById(R.id.fourthChord) as Spinner
     }
 
     private fun initializeOnClickListeners() {
-        bGoToMainButton!!.setOnClickListener {
-            val PageTransition = Intent(this, LoginActivity::class.java)
-            startActivity(PageTransition)
-        }
 
         bPlayButton!!.setOnClickListener {soundManager.playCMajor(this)}
 
@@ -110,7 +99,10 @@ class MainActivity : AppCompatActivity() {
     private fun updateChordsInKey() {
         val key = spKeyPicker!!.selectedItem.toString()
         val chordsInKey = findChordsInKey(key)
+        writeChordsInKey(chordsInKey)
+
         val scaleAdapt = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, chordsInKey)
+
 
         firstChord?.adapter = scaleAdapt
         secondChord?.adapter = scaleAdapt

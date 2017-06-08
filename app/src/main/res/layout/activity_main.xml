@@ -1,105 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.euna.chordr.MainActivity">
 
-    <TextView
-        android:id="@+id/chordsDisplay"
-        android:layout_width="265dp"
-        android:layout_height="35dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintVertical_bias="0.834" />
-
-    <Spinner
-        android:id="@+id/keyPicker"
-        android:layout_width="116dp"
-        android:layout_height="38dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.18"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.197" />
-
-    <Spinner
-        android:id="@+id/scalePicker"
-        android:layout_width="124dp"
-        android:layout_height="38dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.795"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.197"
-        tools:layout_editor_absoluteX="201dp"></Spinner>
-
-    <Spinner
-        android:id="@+id/firstChord"
-        android:layout_width="116dp"
-        android:layout_height="38dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.179"
-        app:layout_constraintVertical_bias="0.325"></Spinner>
-
-    <Spinner
-        android:id="@+id/secondChord"
-        android:layout_width="116dp"
-        android:layout_height="38dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.179"
-        app:layout_constraintVertical_bias="0.456"></Spinner>
-
-    <Spinner
-        android:id="@+id/thirdChord"
-        android:layout_width="116dp"
-        android:layout_height="38dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.179"
-        app:layout_constraintVertical_bias="0.591"></Spinner>
-
-    <Spinner
-        android:id="@+id/fourthChord"
-        android:layout_width="116dp"
-        android:layout_height="38dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.179"
-        app:layout_constraintVertical_bias="0.725"></Spinner>
-
-    <Button
-        android:id="@+id/playButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Play"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.965" />
-
-    <Button
-        android:id="@+id/bGoToMainActivity"
+    <!-- Frame Entirety -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="43dp"
-        android:text="Main Page"
-        tools:layout_editor_absoluteY="5dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-</android.support.constraint.ConstraintLayout>
+
+        <!-- Function Scope -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:orientation="vertical">
+
+            <!-- Top Brim Texts -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvKeySelection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="8dp"
+                    android:text="Key Selection" />
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvChordSelection"
+                        android:layout_width="wrap_content"
+                        android:layout_height="25dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_gravity="right"
+                        android:text="Chord Selection" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <!-- Key/Chord Selectors -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="125dp"
+                android:orientation="vertical">
+
+                <!-- Spinners/Select Button -->
+                <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="horizontal">
+
+                <Spinner
+                    android:id="@+id/keyPicker"
+                    android:layout_width="95dp"
+                    android:layout_height="50dp" />
+
+                <Spinner
+                    android:id="@+id/scalePicker"
+                    android:layout_width="110dp"
+                    android:layout_height="50dp" />
+
+                    <Spinner
+                        android:id="@+id/chordPicker"
+                        android:layout_width="120dp"
+                        android:layout_height="50dp"
+                        android:layout_marginLeft="5dp"/>
+
+                    <Button
+                        android:id="@+id/bSelectChord"
+                        android:layout_width="fill_parent"
+                        android:layout_height="50dp"
+                        android:text="Select" />
+
+
+
+                </LinearLayout><!-- End of Spinners -->
+
+                <!-- Play Buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="65dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/playButtonKeySelection"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="50dp"
+                        android:text="Play" />
+
+                    <Button
+                        android:id="@+id/playButtonChordSelection"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="135dp"
+                        android:text="Play" />
+
+
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+
+            <!-- BPM/Notes -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/chordsDisplay"
+                    android:layout_width="match_parent"
+                    android:textSize="18sp"
+                    android:layout_height="50dp"/>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout> <!-- End of Function Scope -->
+
+
+        <!-- Progression Scope -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="350dp">
+
+
+
+        </ScrollView> <!-- End of Progression Scope -->
+
+
+    ></LinearLayout>
+
+
+
+
+
+
+</LinearLayout>
