@@ -17,18 +17,23 @@ class MainActivity : AppCompatActivity() {
     internal val chords = Chords()
     internal val soundManager = SoundManager()
 
-    internal var tvChordsDisplay: TextView? = null
+    internal var tvNotesDisplay: TextView? = null
     internal var bGoToMainButton: Button? = null
-    internal var bPlayButton: Button? = null
+    internal var bPlayButtonKeySelector: ImageView? = null
+    internal var bPlayButtonChordSelector: ImageView? = null
+    internal var bSelectChord: Button? = null
 
     internal var spKeyPicker: Spinner? = null
     internal var spScalePicker: Spinner? = null
-    internal var firstChord: Spinner? = null
-    internal var secondChord: Spinner? = null
-    internal var thirdChord: Spinner? = null
-    internal var fourthChord: Spinner? = null
     internal var keyPickerIndexSelected = 3
     internal var scalePickerIndexSelected = 0
+
+    internal var spChordPicker: Spinner? = null
+    internal var chordsInCurrentlyPickedKey: Array<String>? = null
+    internal var chordPickerIndexSelected = 0
+
+    internal var chordsInProgression = ArrayList<String>()
+    internal var barSelected = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        updateChordsInKey()
+        updateNotesInKey()
     }
 
     override fun onPause() {
@@ -49,19 +54,23 @@ class MainActivity : AppCompatActivity() {
         val editor = savedState!!.edit()
         editor.putInt("keyPickerIndex", keyPickerIndexSelected)
         editor.putInt("scalePickerIndex", scalePickerIndexSelected)
+        editor.putInt("chordPickerIndex", chordPickerIndexSelected)
         editor.commit()
     }
 
     override fun onResume() {
         super.onResume()
-        spKeyPicker!!.setSelection(savedState!!.getInt("keyPickerIndex", keyPickerIndexSelected));
-        spScalePicker!!.setSelection(savedState!!.getInt("scalePickerIndex", scalePickerIndexSelected));
-        updateChordsInKey()
+        spKeyPicker!!.setSelection(savedState!!.getInt("keyPickerIndex", keyPickerIndexSelected))
+        spScalePicker!!.setSelection(savedState!!.getInt("scalePickerIndex", scalePickerIndexSelected))
+        spChordPicker!!.setSelection(savedState!!.getInt("chordPickerIndex", chordPickerIndexSelected))
+        updateNotesInKey()
     }
 
     private fun initializeFindByViews() {
-        tvChordsDisplay = findViewById(R.id.chordsDisplay) as TextView
-        bPlayButton = findViewById(R.id.playButtonKeySelection) as Button
+        tvNotesDisplay = findViewById(R.id.chordsDisplay) as TextView
+        bPlayButtonKeySelector = findViewById(R.id.playButtonKeySelection) as ImageView
+        bPlayButtonChordSelector = findViewById(R.id.playButtonChordSelection) as ImageView
+        bSelectChord = findViewById(R.id.bSelectChord) as Button
 
         spKeyPicker = findViewById(R.id.keyPicker) as Spinner
         val keyAdapt = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, chords.notes)
@@ -72,16 +81,28 @@ class MainActivity : AppCompatActivity() {
         val scaleAdapt = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, chords.scale)
         spScalePicker!!.adapter = scaleAdapt
         spScalePicker!!.setSelection(scalePickerIndexSelected)
+        updateChordsInChordSelector()
+
+        spChordPicker = findViewById(R.id.chordPicker) as Spinner
+        val chordAdapt = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, chordsInCurrentlyPickedKey)
+        spChordPicker!!.adapter = chordAdapt
+        spChordPicker!!.setSelection(chordPickerIndexSelected)
     }
 
     private fun initializeOnClickListeners() {
 
-        bPlayButton!!.setOnClickListener {soundManager.playCMajor(this)}
+        bPlayButtonKeySelector!!.setOnClickListener {soundManager.playCMajor(this)}
+        bPlayButtonChordSelector!!.setOnClickListener {soundManager.playCSharpMajor(this)}
+
+        bSelectChord!!.setOnClickListener {
+            //TODO: Add Selected Chord from spinner to ArrayList
+            barSelected++ //TODO: Comprehensive bar selection program
+        }
 
         spKeyPicker!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
                 keyPickerIndexSelected = pos
-                updateChordsInKey()
+                updateChordsInChordSelector()
             }
             override fun onNothingSelected(parent: AdapterView<out Adapter>?) {}
         }
@@ -89,45 +110,64 @@ class MainActivity : AppCompatActivity() {
         spScalePicker!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
                 scalePickerIndexSelected = pos
-                updateChordsInKey()
+                updateChordsInChordSelector()
+            }
+            override fun onNothingSelected(parent: AdapterView<out Adapter>?) {}
+        }
+
+        spChordPicker!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
+                chordPickerIndexSelected = pos
+                updateNotesInKey()
             }
             override fun onNothingSelected(parent: AdapterView<out Adapter>?) {}
         }
 
     }
 
-    private fun updateChordsInKey() {
+    private fun updateChordsInChordSelector() {
         val key = spKeyPicker!!.selectedItem.toString()
-        val chordsInKey = findChordsInKey(key)
-        writeChordsInKey(chordsInKey)
-
-        val scaleAdapt = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, chordsInKey)
-
-
-        firstChord?.adapter = scaleAdapt
-        secondChord?.adapter = scaleAdapt
-        thirdChord?.adapter = scaleAdapt
-        fourthChord?.adapter = scaleAdapt
+        chordsInCurrentlyPickedKey = findChordsInKey(key)
     }
 
-    private fun findChordsInKey(scale: String) : Array<String> {
+    private fun updateNotesInKey() {
+        val key = spKeyPicker!!.selectedItem.toString()
+        val chordsInKey = findNotesInKey(key)
+        printNotesInKey(chordsInKey)
+    }
+
+    private fun findChordsInKey(key: String) : Array<String> {
         val chordsInKey: Array<String>
         when (spScalePicker!!.selectedItem.toString()) {
-            "Major" -> chordsInKey = chords.getMajChords(scale)
+            "Major" -> chordsInKey = chords.getMajChords(key)
 
-            "Minor" -> chordsInKey = chords.getMinChords(scale)
+            "Minor" -> chordsInKey = chords.getMinChords(key)
 
-            else -> chordsInKey = chords.getMajChords(scale)
+            else -> chordsInKey = chords.getMajChords(key)
         }
         return chordsInKey
     }
 
-    private fun writeChordsInKey(arrayOfChordsInKey: Array<String>) {
+    private fun findNotesInKey(key: String) : Array<String> {
+        val notesInKey: Array<String>
+        when (spScalePicker!!.selectedItem.toString()) {
+            "Major" -> notesInKey = chords.getMajorScale(key)
+
+            "Minor" -> notesInKey = chords.getMinorScale(key)
+
+            else -> notesInKey = chords.getMajChords(key)
+        }
+        return notesInKey
+    }
+
+
+    private fun printNotesInKey(arrayOfNotesInKey: Array<String>) {
         var chordString = ""
-        for (i in arrayOfChordsInKey.indices) {
-            chordString += arrayOfChordsInKey[i] + " "
+        for (i in arrayOfNotesInKey.indices) {
+            chordString += arrayOfNotesInKey[i] + " "
         }
 
-        tvChordsDisplay!!.text = chordString
+        tvNotesDisplay!!.text = chordString
     }
+
 }
