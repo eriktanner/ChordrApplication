@@ -19,103 +19,77 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="85dp"
             android:orientation="vertical">
 
-            <!-- Top Brim Texts -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tvKeySelection"
-                    android:layout_width="wrap_content"
-                    android:layout_height="25dp"
-                    android:layout_marginLeft="8dp"
-                    android:text="Key" />
 
 
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tvChordSelection"
-                        android:layout_width="wrap_content"
-                        android:layout_height="25dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_gravity="right"
-                        android:text="Chord" />
-                </LinearLayout>
-
-
-            </LinearLayout>
-
-            <!-- Key/Chord Selectors -->
+            <!-- Key Selector -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="125dp"
                 android:orientation="vertical">
 
-                <!-- Spinners/Select Button -->
+                <!-- RightAlign -->
                 <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:orientation="horizontal">
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_gravity="right">
 
-                <Spinner
-                    android:id="@+id/keyPicker"
-                    android:layout_width="95dp"
-                    android:layout_height="50dp" />
+                    <!-- KeySelection Spinners -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/scalePicker"
-                    android:layout_width="110dp"
-                    android:layout_height="50dp" />
+                        <Spinner
+                            android:id="@+id/keyPicker"
+                            android:layout_marginLeft="10dp"
+                            android:layout_width="75dp"
+                            android:layout_height="50dp" />
 
-                    <Spinner
-                        android:id="@+id/chordPicker"
-                        android:layout_width="120dp"
-                        android:layout_height="50dp"
-                        android:layout_marginLeft="5dp"/>
+                        <Spinner
+                            android:id="@+id/scalePicker"
+                            android:layout_width="110dp"
+                            android:layout_height="50dp"
+                            android:layout_marginRight="10dp"/>
 
-                    <Button
-                        android:id="@+id/bSelectChord"
-                        android:layout_width="fill_parent"
-                        android:layout_height="50dp"
-                        android:text="Select" />
-
-
-
-                </LinearLayout><!-- End of Spinners -->
-
-                <!-- Play Buttons -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="65dp"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/playButtonKeySelection"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="50dp"
-                        android:src="@drawable/playbutton"/>
-
-
-                    <ImageView
-                        android:id="@+id/playButtonChordSelection"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="135dp"
-                        android:src="@drawable/playbutton"/>
+                    </LinearLayout>
 
 
                 </LinearLayout>
 
+
+                <!-- RightAlign -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="65dp"
+                    android:layout_gravity="right">
+
+                    <!-- Chord Selector  -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="65dp"
+                        android:orientation="horizontal">
+
+
+                        <Spinner
+                            android:id="@+id/chordPicker"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:layout_marginRight="30dp"/>
+
+                        <ImageView
+                            android:id="@+id/playButtonChordSelection"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginRight="55dp"
+                            android:src="@drawable/playbutton"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
 
             </LinearLayout>
@@ -129,9 +103,9 @@
 
                 <TextView
                     android:id="@+id/chordsDisplay"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:textSize="18sp"
-                    android:layout_height="50dp"/>
+                    android:layout_height="50dp" />
 
 
             </LinearLayout>
@@ -148,6 +122,45 @@
 
 
         </ScrollView> <!-- End of Progression Scope -->
+
+        <!-- CenterAlign -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+
+
+
+
+            <!-- Center -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center">
+
+                <!-- Chord Selector  -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/bSelectChord"
+                        android:layout_width="160dp"
+                        android:layout_height="40dp"
+                        android:gravity="center"
+                        android:text="Select" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+
+
+
+        </LinearLayout>
 
 
     ></LinearLayout>

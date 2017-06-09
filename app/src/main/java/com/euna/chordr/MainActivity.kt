@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.*
+import java.util.*
 
 
 /**
@@ -18,22 +19,21 @@ class MainActivity : AppCompatActivity() {
     internal val soundManager = SoundManager()
 
     internal var tvNotesDisplay: TextView? = null
-    internal var bGoToMainButton: Button? = null
-    internal var bPlayButtonKeySelector: ImageView? = null
     internal var bPlayButtonChordSelector: ImageView? = null
     internal var bSelectChord: Button? = null
 
     internal var spKeyPicker: Spinner? = null
     internal var spScalePicker: Spinner? = null
-    internal var keyPickerIndexSelected = 3
+    internal var keyPickerIndexSelected = 3 //C Major
     internal var scalePickerIndexSelected = 0
 
     internal var spChordPicker: Spinner? = null
     internal var chordsInCurrentlyPickedKey: Array<String>? = null
     internal var chordPickerIndexSelected = 0
-
-    internal var chordsInProgression = ArrayList<String>()
+    
+    internal var chordsInProgression = LinkedList<ChordData>()
     internal var barSelected = 0
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         editor.putInt("keyPickerIndex", keyPickerIndexSelected)
         editor.putInt("scalePickerIndex", scalePickerIndexSelected)
         editor.putInt("chordPickerIndex", chordPickerIndexSelected)
+        editor.putInt("barSelectedIndex", barSelected)
         editor.commit()
     }
 
@@ -63,12 +64,13 @@ class MainActivity : AppCompatActivity() {
         spKeyPicker!!.setSelection(savedState!!.getInt("keyPickerIndex", keyPickerIndexSelected))
         spScalePicker!!.setSelection(savedState!!.getInt("scalePickerIndex", scalePickerIndexSelected))
         spChordPicker!!.setSelection(savedState!!.getInt("chordPickerIndex", chordPickerIndexSelected))
+        barSelected = savedState!!.getInt("chordPickerIndex", barSelected)
         updateNotesInKey()
     }
 
+
     private fun initializeFindByViews() {
         tvNotesDisplay = findViewById(R.id.chordsDisplay) as TextView
-        bPlayButtonKeySelector = findViewById(R.id.playButtonKeySelection) as ImageView
         bPlayButtonChordSelector = findViewById(R.id.playButtonChordSelection) as ImageView
         bSelectChord = findViewById(R.id.bSelectChord) as Button
 
@@ -91,7 +93,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeOnClickListeners() {
 
-        bPlayButtonKeySelector!!.setOnClickListener {soundManager.playCMajor(this)}
         bPlayButtonChordSelector!!.setOnClickListener {soundManager.playCSharpMajor(this)}
 
         bSelectChord!!.setOnClickListener {
