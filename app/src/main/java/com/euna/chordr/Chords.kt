@@ -1,5 +1,7 @@
 package com.euna.chordr;
 
+import java.util.*
+
 class Chords {
     val scale = arrayOf("Major", "Minor")
     val notes = arrayOf("A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#")
@@ -10,65 +12,94 @@ class Chords {
 
     fun getMajorScale(root: String): Array<String> {
         val root = notes.indexOf(root)
-        val first = (root + 2) % notes.size
-        val second = (root + 4) % notes.size
-        val third = (root + 5) % notes.size
-        val fourth = (root + 7) % notes.size
-        val fifth = (root + 9) % notes.size
-        val sixth = (root + 11) % notes.size
-        val seventh = (root + 12) % notes.size
+        val second = (root + 2) % notes.size
+        val third = (root + 4) % notes.size
+        val fourth = (root + 5) % notes.size
+        val fifth = (root + 7) % notes.size
+        val sixth = (root + 9) % notes.size
+        val seventh = (root + 11) % notes.size
 
-        val scale = arrayOf(notes[root], notes[first], notes[second], notes[third], notes[fourth],
-                notes[fifth], notes[sixth], notes[seventh])
+        val scale = arrayOf(notes[root], notes[second], notes[third], notes[fourth], notes[fifth],
+                notes[sixth], notes[seventh])
 
         return scale
     }
 
     fun getMinorScale(root: String): Array<String> {
         val root = notes.indexOf(root)
-        val first = (root + 2) % notes.size
-        val second = (root + 3) % notes.size
-        val third = (root + 5) % notes.size
-        val fourth = (root + 7) % notes.size
-        val fifth = (root + 8) % notes.size
-        val sixth = (root + 10) % notes.size
-        val seventh = (root + 12) % notes.size
+        val second = (root + 2) % notes.size
+        val third = (root + 3) % notes.size
+        val fourth = (root + 5) % notes.size
+        val fifth = (root + 7) % notes.size
+        val sixth = (root + 8) % notes.size
+        val seventh = (root + 10) % notes.size
 
-        val scale = arrayOf(notes[root], notes[first], notes[second], notes[third], notes[fourth],
-                notes[fifth], notes[sixth], notes[seventh])
+        val scale = arrayOf(notes[root], notes[second], notes[third], notes[fourth], notes[fifth],
+                notes[sixth], notes[seventh])
 
         return scale
     }
 
     fun getMajChords(root: String): Array<String> {
         val root = notes.indexOf(root)
-        val first = (root + 2) % notes.size
-        val second = (root + 4) % notes.size
-        val third = (root + 5) % notes.size
-        val fourth = (root + 7) % notes.size
-        val fifth = (root + 9) % notes.size
-        val sixth = (root + 11) % notes.size
-        val seventh = (root + 12) % notes.size
+        val second = (root + 2) % notes.size
+        val third = (root + 4) % notes.size
+        val fourth = (root + 5) % notes.size
+        val fifth = (root + 7) % notes.size
+        val sixth = (root + 9) % notes.size
+        val seventh = (root + 11) % notes.size
 
-        val chords = arrayOf(majChords[root], minChords[first], minChords[second], majChords[third], majChords[fourth],
-                minChords[fifth], dimChords[sixth], majChords[seventh])
+        val chords = arrayOf(majChords[root], minChords[second], minChords[third], majChords[fourth], majChords[fifth],
+                minChords[sixth], dimChords[seventh])
 
         return chords
     }
 
     fun getMinChords(root: String): Array<String> {
         val root = notes.indexOf(root)
-        val first = (root + 2) % notes.size
-        val second = (root + 4) % notes.size
-        val third = (root + 5) % notes.size
-        val fourth = (root + 7) % notes.size
-        val fifth = (root + 9) % notes.size
-        val sixth = (root + 11) % notes.size
-        val seventh = (root + 12) % notes.size
+        val second = (root + 2) % notes.size
+        val third = (root + 4) % notes.size
+        val fourth = (root + 5) % notes.size
+        val fifth = (root + 7) % notes.size
+        val sixth = (root + 9) % notes.size
+        val seventh = (root + 11) % notes.size
 
-        val chords = arrayOf(minChords[root], dimChords[first], majChords[second], minChords[third], minChords[fourth],
-                majChords[fifth], majChords[sixth], minChords[seventh])
+        val chords = arrayOf(minChords[root], dimChords[second], majChords[third], minChords[fourth], minChords[fifth],
+                majChords[sixth], majChords[seventh])
 
         return chords
     }
+
+
+    fun transpose(numOfHalfSteps: Int, chordsInProgression: LinkedList<ChordData>) : LinkedList<ChordData> {
+        var newChordsInProgression: LinkedList<ChordData> = LinkedList()
+
+        for (chord in chordsInProgression){
+            val transposedChord = getTransposedChord(chord, numOfHalfSteps)
+            newChordsInProgression.add(transposedChord)
+        }
+        return newChordsInProgression
+    }
+
+    fun getTransposedChord(chordIn: ChordData, numOfHalfSteps: Int) : ChordData {
+
+        var origChordName = chordIn.noteOfChord
+        var origChordScale = chordIn.scaleOfChord
+
+        var counter = 0
+        var start: Int? = null
+        for (note in notes) {
+            if (origChordName.equals(note)) {
+                start = counter
+                break
+            }
+            counter++
+        }
+
+        val newChordNote = notes[(start!! + numOfHalfSteps) % 12]
+        val finalChord = newChordNote + " " + origChordScale
+
+        return ChordData(finalChord, chordIn.numberOfBeats, chordIn.interval)
+    }
+
 }

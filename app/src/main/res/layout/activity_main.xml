@@ -18,7 +18,7 @@
         <!-- Function Scope -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="160dp"
             android:layout_marginTop="85dp"
             android:orientation="vertical">
 
@@ -45,14 +45,14 @@
                         <Spinner
                             android:id="@+id/keyPicker"
                             android:layout_marginLeft="10dp"
-                            android:layout_width="75dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="50dp" />
 
                         <Spinner
                             android:id="@+id/scalePicker"
                             android:layout_width="110dp"
                             android:layout_height="50dp"
-                            android:layout_marginRight="10dp"/>
+                            android:layout_marginRight="3dp"/>
 
                     </LinearLayout>
 
@@ -69,7 +69,7 @@
                     <!-- Chord Selector  -->
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="65dp"
+                        android:layout_height="match_parent"
                         android:orientation="horizontal">
 
 
@@ -77,15 +77,29 @@
                             android:id="@+id/chordPicker"
                             android:layout_width="wrap_content"
                             android:layout_height="50dp"
-                            android:layout_marginRight="30dp"/>
+                            android:layout_marginRight="9dp"/>
 
-                        <ImageView
-                            android:id="@+id/playButtonChordSelection"
+                        <TextView
+                            android:id="@+id/AddButtonChordSelection"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginRight="55dp"
-                            android:src="@drawable/playbutton"/>
+                            android:text="+ Add"
+                            android:textColor="@android:color/white"
+                            android:textSize="18dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginRight="57dp"/>
+
+                        <!--
+                        <ImageView
+                            android:id="@+id/playButtonChordSelection"
+                            android:layout_width="48dp"
+                            android:layout_height="wrap_content"
+                            android:scaleX=".75"
+                            android:scaleY=".75"
+                            android:layout_marginRight="35dp"
+                            android:src="@drawable/check"/>
+                          -->
+
 
                     </LinearLayout>
 
@@ -94,34 +108,161 @@
 
             </LinearLayout>
 
-            <!-- BPM/Notes -->
-            <LinearLayout
+
+            <!-- LastBar -->
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="match_parent"
                 android:orientation="horizontal">
 
 
-                <TextView
-                    android:id="@+id/chordsDisplay"
-                    android:layout_width="wrap_content"
-                    android:textSize="18sp"
-                    android:layout_height="50dp" />
 
+                <!-- CenterAlign Container -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <!-- CenterAlign -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:layout_gravity="center">
+
+                        <!-- Notes -->
+                <!--    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <CheckBox
+                            android:id="@+id/ivNoteQuarter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:button="@drawable/note_quarter"/>
+
+                        <CheckBox
+                            android:id="@+id/ivNoteHalf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:button="@drawable/note_half"/>
+
+                        <CheckBox
+                            android:id="@+id/ivNoteDottedHalf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:button="@drawable/note_dottedhalf"/>
+
+                        <CheckBox
+                            android:id="@+id/ivNoteWhole"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:button="@drawable/note_whole"/>
+
+                    </LinearLayout> -->
+
+                </LinearLayout>
 
             </LinearLayout>
+
+
+
+            <!-- RightAlign Container -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <!-- RightAlign -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:layout_gravity="right">
+
+                        <!-- BPM -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+
+                            <TextView
+                                android:id="@+id/tvBPMnum"
+                                android:layout_width="wrap_content"
+                                android:layout_height="50dp"
+                                android:textSize="18sp"
+                                android:text="128"/>
+
+                            <Button
+                                android:id="@+id/bBPMSpace"
+                                android:layout_width="3dp"
+                                android:layout_height="match_parent" />
+
+                            <TextView
+                                android:id="@+id/tvBPMtext"
+                                android:layout_width="wrap_content"
+                                android:layout_height="50dp"
+                                android:layout_marginRight="20dp"
+                                android:textSize="18sp"
+                                android:text="BPM" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+
+
+
+            </RelativeLayout>
+
+
+
 
 
         </LinearLayout> <!-- End of Function Scope -->
 
 
         <!-- Progression Scope -->
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="290dp">
+            android:layout_height="330dp"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+
+
+            <!-- Center -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_gravity="center">
+
+                <!-- Chord Progression  -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <!-- Progression Bar Container -->
+                    <FrameLayout
+                        android:id="@+id/container_progressionbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                    </FrameLayout>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
 
 
 
-        </ScrollView> <!-- End of Progression Scope -->
+
+        </LinearLayout> <!-- End of Progression Scope -->
 
         <!-- CenterAlign -->
         <LinearLayout
@@ -139,18 +280,31 @@
                 android:layout_height="40dp"
                 android:layout_gravity="center">
 
-                <!-- Chord Selector  -->
+                <!-- Select Button  -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="match_parent"
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/bSelectChord"
-                        android:layout_width="160dp"
-                        android:layout_height="40dp"
-                        android:gravity="center"
-                        android:text="Select" />
+                        android:id="@+id/bTranspose"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Transpose" />
+
+                    <Button
+                        android:id="@+id/bGoToLogin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Login" />
+
+                    <ImageView
+                        android:id="@+id/bPlayChordProgression"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/playbutton"
+                    />
+
 
                 </LinearLayout>
 
@@ -163,9 +317,96 @@
         </LinearLayout>
 
 
-    ></LinearLayout>
 
 
+        <!-- LastBar -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+
+
+            <!-- LeftAlign Container -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <!-- LeftAlign -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_gravity="left">
+
+                    <TextView
+                        android:id="@+id/tvTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Untitled"
+                        android:textSize="15.5dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginLeft="10dp"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+
+            <!-- RightAlign Container -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <!-- RightAlign -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_gravity="right">
+
+                    <!-- BPM -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+
+                        <TextView
+                            android:id="@+id/tvSave"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:layout_marginRight="10dp"
+                            android:text="Save"/>
+
+                        <TextView
+                            android:id="@+id/tvLoad"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="10dp"
+                            android:text="Load"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+
+
+
+        </RelativeLayout>
+
+
+
+
+
+        ></LinearLayout>
 
 
 
