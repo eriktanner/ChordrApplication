@@ -188,18 +188,26 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
     private fun initializeButtonListeners() {
 
         bAddButtonChordSelector!!.setOnClickListener {
-            //Out of bounds check
-            if (nextInputIndex > chordsInProgression.size) //TODO:We need this check on the progressionbar onclicklistener
-                nextInputIndex = chordsInProgression.size //TODO: We also need a delete function where the user can slide the progression bar to remove the view
 
-            chordsInProgression.add(nextInputIndex, ChordData(chordsInCurrentlyPickedKey!![chordPickerIndexSelected], numOfBeatsSelected, chordPickerIndexSelected + 1))
-            Log.v("ChordsIn/Key: ", printChordProgression())
+            if (chordsInProgression!!.size < 8) {
+                //Out of bounds check
+                if (nextInputIndex > chordsInProgression.size) //TODO:We need this check on the progressionbar onclicklistener
+                    nextInputIndex = chordsInProgression.size //TODO: We also need a delete function where the user can slide the progression bar to remove the view
 
-            nextInputIndex++ //Sets next input to end of bar just created
+                chordsInProgression.add(nextInputIndex, ChordData(chordsInCurrentlyPickedKey!![chordPickerIndexSelected], numOfBeatsSelected, chordPickerIndexSelected + 1))
+                Log.v("ChordsIn/Key: ", printChordProgression())
 
-            sendChordsToProgressionBar()}
+                nextInputIndex++ //Sets next input to end of bar just created
 
-        bPlayChordProgression!!.setOnClickListener {playEntireChordProgression()}
+                sendChordsToProgressionBar()
+            }
+        }
+
+        bPlayChordProgression!!.setOnClickListener {
+            if (threadProgressionBarPlayer != null && threadProgressionBarPlayer!!.isAlive)
+                stopChordProgressionPlayback()
+            else playEntireChordProgression()
+        }
 
         bGoToLogin!!.setOnClickListener {
             val PageTransition = Intent(this, LoginActivity::class.java)
@@ -219,7 +227,15 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
 
         tvTitle!!.setOnClickListener {promptTitleInput()}
 
-        bTranspose!!.setOnClickListener {transpose(1)}
+        bTranspose!!.setOnClickListener {
+            var halfSteps = 1
+            transpose(halfSteps)
+
+            var nextKeyPickerVal = spKeyPicker!!.selectedItemPosition + halfSteps
+            if (nextKeyPickerVal > 11) nextKeyPickerVal = 0
+            spKeyPicker!!.setSelection(nextKeyPickerVal)
+            updateOnKeyOrScaleChange()
+        }
 
 
     }
@@ -261,6 +277,7 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
     private fun updateOnKeyOrScaleChange() {
         updateChordsInCurrentlyPickedKey()
         updateChordSpinner()
+        updateIntervals();
         //updateNotesInKey()
     }
 
@@ -282,6 +299,11 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
         spChordPicker!!.setSelection(chordPickerIndexSelected)
     }
 
+    private fun updateIntervals() {
+        var newIntervalStrings: Array<String>? = null
+        newIntervalStrings = chords.findIntervalsOfChords(spKeyPicker!!.selectedItem.toString(), spScalePicker!!.selectedItem.toString(), chordsInProgression)
+        progressionManager!!.updateIntervals(newIntervalStrings)
+    }
 
     /*Prints Notes in Key*/
     private fun updateNotesInKey() {
@@ -315,6 +337,8 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
 
     /********************************** Progression Functions ************************************/
 
+    var ProgressionIsPlaying = false
+
     /*Updates every chord's BPM in the progression*/
     private fun setBPM(newBPM: Int) {
         soundManager.setBPM(newBPM)
@@ -324,6 +348,8 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
     private fun playEntireChordProgression() {
 
         stopChordProgressionPlayback()
+        bPlayChordProgression!!.setImageResource(R.drawable.selectbutton)
+
 
         threadProgressionBarPlayer = Thread() {
                                                                 /*Steps: 1. Calculate Time of Lock      */
@@ -342,13 +368,25 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
                     }
                     counter++
                 }
+
+                runOnUiThread(Runnable { //Switches Stop Button for Play Button
+                    bPlayChordProgression!!.setImageResource(R.drawable.playbutton)
+                })
+
             } catch(e: Exception) {
                 e.printStackTrace()
             }
 
+
+
         }
         threadProgressionBarPlayer!!.start()
+
     }
+
+
+
+
 
     /* Plays chord */
     fun playChord(chord: ChordData, timeToHoldNote: Long) {
@@ -356,9 +394,11 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
         val thread = Thread() {
 
             try {
-                soundManager.playChordByStringName(this, chord.toString())
-                Thread.sleep(timeToHoldNote) //in milliseconds
-                soundManager.releaseMediaPlayer()
+                if (threadProgressionBarPlayer != null && !threadProgressionBarPlayer!!.isAlive) {
+                    soundManager.playChordByStringName(this, chord.toString())
+                    Thread.sleep(timeToHoldNote) //in milliseconds
+                    soundManager.releaseMediaPlayer()
+                }
             } catch(e: Exception) {
                 e.printStackTrace()
             }
@@ -369,13 +409,18 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
 
     /* Stops the chord progression from playing */
     fun stopChordProgressionPlayback() {
-        if (threadProgressionBarPlayer != null)
+
+        if (threadProgressionBarPlayer != null) {
+            soundManager!!.immediateReleaseAllMediaPlayers()
             threadProgressionBarPlayer!!.interrupt()
+        }
+        bPlayChordProgression!!.setImageResource(R.drawable.playbutton) //Switches Play Button for Stop Button
     }
 
-    /* Sends the needed data to Progression Fragment, call whenever an update is needed*/
+    /* Sends the needed data to Progression Fragment, call whenever an update is needed, ALSO HANDLES INTERVAL UPDATES*/
     fun sendChordsToProgressionBar() {
         progressionManager!!.setChordsToBeConvertedToBars(chordsInProgression)
+        updateIntervals()
     }
 
     /* Transpose the progression bar by number of half steps*/
@@ -399,14 +444,14 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
     /* (Callback) Called whenever the user selects a bar*/
     override fun onBarClicked(pos: Int) {
         //lastClickedBar = pos
-        nextInputIndex = pos + 1
         playChord(chordsInProgression!![pos], 500)
     }
 
     /* (Callback) Called whenever the user long clicks a bar*/
     override fun onBarLongClicked(pos: Int) {
         ///nextInputIndex = lastClickedBar + 1//Resets input index upon long click
-        startingPlaybackIndex = pos
+        //startingPlaybackIndex = pos
+        nextInputIndex = pos + 1
     }
 
     /************************************ General Functions **************************************/

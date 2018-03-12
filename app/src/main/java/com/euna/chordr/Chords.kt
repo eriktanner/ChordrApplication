@@ -102,4 +102,44 @@ class Chords {
         return ChordData(finalChord, chordIn.numberOfBeats, chordIn.interval)
     }
 
+    fun findIntervalsOfChords(key: String, scale: String, chordsInProgression: LinkedList<ChordData>) : Array<String> {
+        val chordsInKey: Array<String>
+        when (scale) {
+            "Major" -> chordsInKey = getMajChords(key)
+            "Minor" -> chordsInKey = getMinChords(key)
+            else -> chordsInKey = getMajChords(key)
+        }
+
+        var finalIntervalArray: Array<String> = arrayOf("","","","","","","","")
+
+        var chordCounter = 0
+        for (chord in chordsInProgression) {
+
+            var indexCounter = 0
+            for (index in chordsInKey) {
+
+                if (chord.toString().equals(index)) {
+                    var stringInterval: String = ""
+                    when (indexCounter + 1) {
+                        1 -> stringInterval = "I"
+                        2 -> stringInterval = "II"
+                        3 -> stringInterval = "III"
+                        4 -> stringInterval = "IV"
+                        5 -> stringInterval = "V"
+                        6 -> stringInterval = "VI"
+                        7 -> stringInterval = "VII"
+                        else -> stringInterval =  ""
+                    }
+                    finalIntervalArray!![chordCounter] = stringInterval
+                }
+
+                indexCounter++
+            }
+
+            chordCounter++
+        }
+
+        return finalIntervalArray
+    }
+
 }

@@ -67,6 +67,12 @@ class SoundManager {
         threadMediaPlayerReleaser!!.start()
     }
 
+    fun immediateReleaseAllMediaPlayers() {
+        if (isPlaying1)
+            mediaPlayer1!!.release()
+        if (isPlaying2)
+            mediaPlayer2!!.release()
+    }
 
     /* Plays the sound file corresponding to the resource id */
     fun playInstrument(context: Context, resID: Int) {
@@ -97,44 +103,101 @@ class SoundManager {
             "D# maj" -> playCSharpMajor(context)
             "E maj" -> playCMajor(context)
             "E# maj" -> playCSharpMajor(context)
-            "F maj" -> playCMajor(context)
+            "F maj" -> playFMajor(context)
             "F# maj" -> playCSharpMajor(context)
-            "G maj" -> playCMajor(context)
+            "G maj" -> playGMajor(context)
             "G# maj" -> playCSharpMajor(context)
-            "A min" -> playCMajor(context)
+
+            "A min" -> playAMin(context)
             "A# min" -> playCSharpMajor(context)
             "B min" -> playCMajor(context)
             "B# min" -> playCSharpMajor(context)
             "C min" -> playCMajor(context)
             "C# min" -> playCSharpMajor(context)
-            "D min" -> playCMajor(context)
+            "D min" -> playDMin(context)
             "D# min" -> playCSharpMajor(context)
-            "E min" -> playCMajor(context)
+            "E min" -> playEMin(context)
             "E# min" -> playCSharpMajor(context)
             "F min" -> playCMajor(context)
             "F# min" -> playCSharpMajor(context)
             "G min" -> playCMajor(context)
             "G# min" -> playCSharpMajor(context)
+
+            "B dim" -> playBDim(context)
             else -> {}
         }
     }
 
     /*********************************** Chords **************************************/
 
+    fun playAMin(context: Context) {
+        when (instrumentSelected) {
+            Instrument.SawWave -> playInstrument(context, R.raw.amin)
+            Instrument.Guitar -> playInstrument(context, R.raw.amin)
+            Instrument.Piano -> playInstrument(context, R.raw.amin)
+            else -> {}
+        }
+    }
+
+    fun playBDim(context: Context) {
+        when (instrumentSelected) {
+            Instrument.SawWave -> playInstrument(context, R.raw.bdim)
+            Instrument.Guitar -> playInstrument(context, R.raw.bdim)
+            Instrument.Piano -> playInstrument(context, R.raw.bdim)
+            else -> {}
+        }
+    }
+
     fun playCMajor(context: Context) {
         when (instrumentSelected) {
-            Instrument.SawWave -> playInstrument(context, R.raw.cmajor)
-            Instrument.Guitar -> playInstrument(context, R.raw.cmajor)
-            Instrument.Piano -> playInstrument(context, R.raw.cmajor)
+            Instrument.SawWave -> playInstrument(context, R.raw.cmaj)
+            Instrument.Guitar -> playInstrument(context, R.raw.cmaj)
+            Instrument.Piano -> playInstrument(context, R.raw.cmaj)
             else -> {}
         }
     }
 
     fun playCSharpMajor(context: Context) {
         when (instrumentSelected) {
-            Instrument.SawWave -> playInstrument(context, R.raw.catsound)
-            Instrument.Guitar -> playInstrument(context, R.raw.catsound)
-            Instrument.Piano -> playInstrument(context, R.raw.catsound)
+            Instrument.SawWave -> playInstrument(context, R.raw.cmaj)
+            Instrument.Guitar -> playInstrument(context, R.raw.cmaj)
+            Instrument.Piano -> playInstrument(context, R.raw.cmaj)
+            else -> {}
+        }
+    }
+
+    fun playDMin(context: Context) {
+        when (instrumentSelected) {
+            Instrument.SawWave -> playInstrument(context, R.raw.dmin)
+            Instrument.Guitar -> playInstrument(context, R.raw.dmin)
+            Instrument.Piano -> playInstrument(context, R.raw.dmin)
+            else -> {}
+        }
+    }
+
+    fun playEMin(context: Context) {
+        when (instrumentSelected) {
+            Instrument.SawWave -> playInstrument(context, R.raw.emin)
+            Instrument.Guitar -> playInstrument(context, R.raw.emin)
+            Instrument.Piano -> playInstrument(context, R.raw.emin)
+            else -> {}
+        }
+    }
+
+    fun playFMajor(context: Context) {
+        when (instrumentSelected) {
+            Instrument.SawWave -> playInstrument(context, R.raw.fmaj)
+            Instrument.Guitar -> playInstrument(context, R.raw.fmaj)
+            Instrument.Piano -> playInstrument(context, R.raw.fmaj)
+            else -> {}
+        }
+    }
+
+    fun playGMajor(context: Context) {
+        when (instrumentSelected) {
+            Instrument.SawWave -> playInstrument(context, R.raw.gmaj)
+            Instrument.Guitar -> playInstrument(context, R.raw.gmaj)
+            Instrument.Piano -> playInstrument(context, R.raw.gmaj)
             else -> {}
         }
     }

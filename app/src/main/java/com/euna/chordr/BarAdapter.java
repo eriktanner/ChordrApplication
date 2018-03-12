@@ -28,6 +28,7 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         void barAdapterOnBarLongClicked(int pos);
     }
 
+
     public BarAdapter(ProgressionManager FragmentContext, Context context, List<Bar> listOfBars) {
         layoutInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
         this.listOfBars = listOfBars;
@@ -45,8 +46,11 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
     public void onBindViewHolder(BarViewHolder viewHolder, int i) {
         Bar currentBar = listOfBars.get(i);
         viewHolder.barText.setText(currentBar.getMainText());
+        viewHolder.barInterval.setText(currentBar.getIntervalText());
         //viewHolder.barImage.setImageResource(currentBar.getIconId());
     }
+
+
 
     /* Deletes Bar*/
     public void removeBarFromProgression(int pos) {
@@ -63,13 +67,15 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
         barAdapterListener.barAdapterOnBarLongClicked(pos);
     }
 
-    public void setListOfBars(List<Bar> listOfBars) {
-        this.listOfBars = listOfBars;
+    public void updateBarIntervals(String[] newIntervals) {
+        for (int i = 0; i < listOfBars.size(); i++) {
+            listOfBars.get(i).setIntervalText(newIntervals[i]);
+        }
+        notifyDataSetChanged();
     }
 
-    public void addBar(Bar newBar) {
-        listOfBars.add(newBar);
-    }
+
+
 
     @Override
     public int getItemCount() {
@@ -80,6 +86,7 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
         ImageView barImage;
         TextView barText;
+        TextView barInterval;
 
         public BarViewHolder(View itemView) {
             super(itemView);
@@ -89,7 +96,14 @@ public class BarAdapter extends RecyclerView.Adapter<BarAdapter.BarViewHolder> {
 
             //barImage = (ImageView) itemView.findViewById(R.id.ivBarImage);
             barText = (TextView) itemView.findViewById(R.id.tvBarText);
+            barInterval = (TextView) itemView.findViewById(R.id.tvBarInterval);
         }
+
+
+        public void updateBarInterval(String newInterval) {
+            barInterval.setText(newInterval);
+        }
+
 
         @Override
         public void onClick(View view) {

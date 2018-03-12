@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
@@ -48,11 +48,11 @@ class ProgressionManager : Fragment(), BarAdapter.BarAdapterInterface {
 
         barAdapter = BarAdapter(this, context , adapterList!!)
         progressionBar!!.adapter = barAdapter
-        progressionBar!!.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        progressionBar!!.layoutManager = GridLayoutManager(context, 4)
+
 
         //RecyclerView OnTouchListener
         registerForContextMenu(progressionBar!!)
-        progressionBar!!.isLongClickable = true
         val onTouchCallback = BarEvents(barAdapter!!)
         val onTouchCallbackHelper = ItemTouchHelper(onTouchCallback)
         onTouchCallbackHelper.attachToRecyclerView(progressionBar)
@@ -95,7 +95,9 @@ class ProgressionManager : Fragment(), BarAdapter.BarAdapterInterface {
     }
 
 
-
+    fun updateIntervals(newIntervals: Array<String>) {
+        barAdapter!!.updateBarIntervals(newIntervals)
+    }
 
 
 

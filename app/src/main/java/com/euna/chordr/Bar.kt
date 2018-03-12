@@ -8,5 +8,6 @@ class Bar {
 
     var IconId: Int? = null
     var mainText: String? = null
+    var intervalText: String? = null
 
 }

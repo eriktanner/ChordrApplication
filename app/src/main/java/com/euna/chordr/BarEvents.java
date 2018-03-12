@@ -17,14 +17,19 @@ public class BarEvents extends ItemTouchHelper.SimpleCallback {
     }
 
     public BarEvents(BarAdapter barAdapter) {
-        super(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.UP | ItemTouchHelper.DOWN);
+        super(ItemTouchHelper.ACTION_STATE_DRAG | ItemTouchHelper.DOWN, ItemTouchHelper.START | ItemTouchHelper.END |ItemTouchHelper.LEFT | ItemTouchHelper.ACTION_STATE_SWIPE | ItemTouchHelper.ANIMATION_TYPE_SWIPE_SUCCESS | 4);
         this.barAdapter = barAdapter;
     }
 
+    @Override
+    public boolean isItemViewSwipeEnabled() {
+        return true;
+    }
 
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder viewHolder1) {
-        return false;
+        barAdapter.removeBarFromProgression(viewHolder.getAdapterPosition());
+        return true;
     }
 
     @Override

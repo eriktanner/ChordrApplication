@@ -77,17 +77,17 @@
                             android:id="@+id/chordPicker"
                             android:layout_width="wrap_content"
                             android:layout_height="50dp"
-                            android:layout_marginRight="9dp"/>
+                            android:layout_marginRight="17dp"/>
 
                         <TextView
                             android:id="@+id/AddButtonChordSelection"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="+ Add"
+                            android:text="Add"
                             android:textColor="@android:color/white"
                             android:textSize="18dp"
                             android:layout_marginTop="2dp"
-                            android:layout_marginRight="57dp"/>
+                            android:layout_marginRight="64dp"/>
 
                         <!--
                         <ImageView
@@ -238,7 +238,7 @@
             <!-- Center -->
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="100dp"
+                android:layout_height="200dp"
                 android:layout_gravity="center">
 
                 <!-- Chord Progression  -->
@@ -257,19 +257,18 @@
 
                 </LinearLayout>
 
-            </LinearLayout>
-
-
-
+             </LinearLayout>
 
         </LinearLayout> <!-- End of Progression Scope -->
+
+
 
         <!-- CenterAlign -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:orientation="vertical"
-            android:layout_gravity="center_vertical">
+            android:layout_gravity="bottom">
 
 
 
