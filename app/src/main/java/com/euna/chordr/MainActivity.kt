@@ -46,10 +46,11 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
 
 
     //Key & Scale Picker
-    internal var spKeyPicker: Spinner? = null
-    internal var spScalePicker: Spinner? = null
-    internal var keyPickerIndexSelected = 3 //C Major
-    internal var scalePickerIndexSelected = 0
+    internal var pickerManager: Pickers? = null;
+
+
+
+
 
     //ChordPicker
     internal var spChordPicker: Spinner? = null
@@ -73,10 +74,10 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
 
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         savedState = getPreferences(Activity.MODE_PRIVATE);
+        pickerManager = Pickers(this)
         setContentView(R.layout.activity_main)
         initializeFindByViews()
         initializeOnClickListeners()
@@ -93,8 +94,8 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
     override fun onPause() {
         super.onPause()
         val editor = savedState!!.edit()
-        editor.putInt("keyPickerIndex", keyPickerIndexSelected)
-        editor.putInt("scalePickerIndex", scalePickerIndexSelected)
+        pickerManager!!.savePickerIndices();
+
         editor.putInt("chordPickerIndex", chordPickerIndexSelected)
         editor.putInt("numberOfBeatsSelected", numOfBeatsSelected)
         editor.putInt("barSelectedIndex", nextInputIndex)
@@ -103,15 +104,13 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
 
     override fun onResume() {
         super.onResume()
-        keyPickerIndexSelected = savedState!!.getInt("keyPickerIndex", keyPickerIndexSelected)
-        scalePickerIndexSelected = savedState!!.getInt("scalePickerIndex", scalePickerIndexSelected)
         chordPickerIndexSelected = savedState!!.getInt("chordPickerIndex", chordPickerIndexSelected)
+
         numOfBeatsSelected = savedState!!.getInt("numberOfBeatsSelected", numOfBeatsSelected)
         nextInputIndex = savedState!!.getInt("chordPickerIndex", nextInputIndex)
 
 
-        spKeyPicker!!.setSelection(keyPickerIndexSelected)
-        spScalePicker!!.setSelection(scalePickerIndexSelected)
+
         spChordPicker!!.setSelection(chordPickerIndexSelected)
         selectNote(numOfBeatsSelected)
 
@@ -149,6 +148,8 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
         cbNoteDottedHalf = findViewById(R.id.ivNoteDottedHalf) as CheckBox
         cbNoteWhole = findViewById(R.id.ivNoteWhole) as CheckBox */
 
+        pickerManager?.initPickerListViews()
+
         tvBPM = findViewById(R.id.tvBPMnum) as TextView
         tvBPMText = findViewById(R.id.tvBPMtext) as TextView
         bBPMSpace = findViewById(R.id.bBPMSpace) as Button
@@ -160,15 +161,6 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
     }
 
     private fun initializeListViews() {
-        spKeyPicker = findViewById(R.id.keyPicker) as Spinner
-        val keyAdapt = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, chords.notes)
-        spKeyPicker!!.adapter = keyAdapt
-        spKeyPicker!!.setSelection(keyPickerIndexSelected)
-
-        spScalePicker = findViewById(R.id.scalePicker) as Spinner
-        val scaleAdapt = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, chords.scale)
-        spScalePicker!!.adapter = scaleAdapt
-        spScalePicker!!.setSelection(scalePickerIndexSelected)
         updateChordsInCurrentlyPickedKey()
         initializeChordSpinner()
     }
@@ -227,7 +219,7 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
 
         tvTitle!!.setOnClickListener {promptTitleInput()}
 
-        bTranspose!!.setOnClickListener {
+        /*bTranspose!!.setOnClickListener {
             var halfSteps = 1
             transpose(halfSteps)
 
@@ -235,28 +227,14 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
             if (nextKeyPickerVal > 11) nextKeyPickerVal = 0
             spKeyPicker!!.setSelection(nextKeyPickerVal)
             updateOnKeyOrScaleChange()
-        }
+        }*/
 
 
     }
 
 
     private fun initializeListListeners() {
-        spKeyPicker!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
-                keyPickerIndexSelected = pos
-                updateOnKeyOrScaleChange()
-            }
-            override fun onNothingSelected(parent: AdapterView<out Adapter>?) {}
-        }
-
-        spScalePicker!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
-                scalePickerIndexSelected = pos
-                updateOnKeyOrScaleChange()
-            }
-            override fun onNothingSelected(parent: AdapterView<out Adapter>?) {}
-        }
+        pickerManager?.initPickerOnClickListeners()
 
         spChordPicker!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
@@ -274,7 +252,7 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
     /***************************************** Updates ********************************************/
 
     /*Call whenever key or scale is changed*/
-    private fun updateOnKeyOrScaleChange() {
+    fun updateOnKeyOrScaleChange() {
         updateChordsInCurrentlyPickedKey()
         updateChordSpinner()
         updateIntervals();
@@ -283,8 +261,9 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
 
     /*Updates the data array of the chords in the currently selected key/scale of the scale selection spinners*/
     private fun updateChordsInCurrentlyPickedKey() {
-        val key = spKeyPicker!!.selectedItem.toString()
-        chordsInCurrentlyPickedKey = findChordsInKey(key)
+        val key = pickerManager?.spKeyPicker?.selectedItem.toString()
+        val scale = pickerManager?.spScalePicker?.selectedItem.toString()
+        chordsInCurrentlyPickedKey = chords.findChordsInKey(chords, key, scale)
     }
 
     /*Updates the chord spinner after the scale has been changed, must be called after updateChordsInCurrentlyPickedKey()*/
@@ -301,14 +280,15 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
 
     private fun updateIntervals() {
         var newIntervalStrings: Array<String>? = null
-        newIntervalStrings = chords.findIntervalsOfChords(spKeyPicker!!.selectedItem.toString(), spScalePicker!!.selectedItem.toString(), chordsInProgression)
+        newIntervalStrings = chords.findIntervalsOfChords(pickerManager?.spKeyPicker?.selectedItem.toString(), pickerManager?.spScalePicker?.selectedItem.toString(), chordsInProgression)
         progressionManager!!.updateIntervals(newIntervalStrings)
     }
 
     /*Prints Notes in Key*/
     private fun updateNotesInKey() {
-        val key = spKeyPicker!!.selectedItem.toString()
-        val chordsInKey = findNotesInKey(key)
+        val key = pickerManager?.spKeyPicker?.selectedItem.toString()
+        val scale = pickerManager?.spScalePicker?.selectedItem.toString()
+        val chordsInKey = chords.findChordsInKey(chords, key, scale)
         printNotesInKey(chordsInKey)
     }
 
@@ -521,31 +501,7 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
     }
 
 
-    /*Returns a string array of the chords (C maj, etc) currently selected by scale*/
-    private fun findChordsInKey(key: String) : Array<String> {
-        val chordsInKey: Array<String>
-        when (spScalePicker!!.selectedItem.toString()) {
-            "Major" -> chordsInKey = chords.getMajChords(key)
 
-            "Minor" -> chordsInKey = chords.getMinChords(key)
-
-            else -> chordsInKey = chords.getMajChords(key)
-        }
-        return chordsInKey
-    }
-
-    /*Returns a string array of the notes (C, F#, etc) currently selected by scale*/
-    private fun findNotesInKey(key: String) : Array<String> {
-        val notesInKey: Array<String>
-        when (spScalePicker!!.selectedItem.toString()) {
-            "Major" -> notesInKey = chords.getMajorScale(key)
-
-            "Minor" -> notesInKey = chords.getMinorScale(key)
-
-            else -> notesInKey = chords.getMajChords(key)
-        }
-        return notesInKey
-    }
 
 
     /*Prints the notes in the current key to the TextView tvNotesDisplay*/

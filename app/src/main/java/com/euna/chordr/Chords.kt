@@ -10,6 +10,7 @@ class Chords {
     val dimChords = arrayOf("A dim", "A# dim", "B dim", "C dim", "C# dim", "D dim", "D# dim", "E dim", "F dim", "F# dim", "G dim", "G# dim")
 
 
+
     fun getMajorScale(root: String): Array<String> {
         val root = notes.indexOf(root)
         val second = (root + 2) % notes.size
@@ -140,6 +141,34 @@ class Chords {
         }
 
         return finalIntervalArray
+    }
+
+
+
+    /*Returns a string array of the chords (C maj, etc) currently selected by scale*/
+    fun findChordsInKey(chords: Chords, key: String, scale: String) : Array<String> {
+        val chordsInKey: Array<String>
+        when (scale) {
+            "Major" -> chordsInKey = chords.getMajChords(key)
+
+            "Minor" -> chordsInKey = chords.getMinChords(key)
+
+            else -> chordsInKey = chords.getMajChords(key)
+        }
+        return chordsInKey
+    }
+
+    /*Returns a string array of the notes (C, F#, etc) currently selected by scale*/
+    fun findNotesInKey(chords: Chords, key: String, scale: String) : Array<String> {
+        val notesInKey: Array<String>
+        when (scale) {
+            "Major" -> notesInKey = chords.getMajorScale(key)
+
+            "Minor" -> notesInKey = chords.getMinorScale(key)
+
+            else -> notesInKey = chords.getMajChords(key)
+        }
+        return notesInKey
     }
 
 }
