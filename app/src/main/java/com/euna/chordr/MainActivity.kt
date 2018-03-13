@@ -8,11 +8,8 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.InputType
-import android.util.Log
-import android.view.View
 import android.widget.*
 import java.util.*
-import kotlin.collections.ArrayList
 
 //Log.v("ChordsIn/Key: ", chordsInCurrentlyPickedKey!!.get(0) )
 
@@ -27,7 +24,6 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
 
     internal var bGoToLogin: Button? = null
     internal var tvNotesDisplay: TextView? = null
-    internal var bAddButtonChordSelector: TextView? = null
     internal var bPlayChordProgression: ImageView? = null
 
     internal var tvTitle: TextView? = null
@@ -52,12 +48,7 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
 
 
 
-    //ChordPicker
-    internal var spChordPicker: Spinner? = null
-    internal var chordAdapt: ArrayAdapter<String>? = null
-    internal var chordListForDropDown: List<String>? = null //Needed for dynamic changing
-    internal var chordsInCurrentlyPickedKey: Array<String>? = null
-    internal var chordPickerIndexSelected = 0
+
 
     internal var chordsInProgression = LinkedList<ChordData>()
     internal var nextInputIndex = 0
@@ -96,7 +87,6 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
         val editor = savedState!!.edit()
         pickerManager!!.savePickerIndices();
 
-        editor.putInt("chordPickerIndex", chordPickerIndexSelected)
         editor.putInt("numberOfBeatsSelected", numOfBeatsSelected)
         editor.putInt("barSelectedIndex", nextInputIndex)
         editor.commit()
@@ -104,19 +94,17 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
 
     override fun onResume() {
         super.onResume()
-        chordPickerIndexSelected = savedState!!.getInt("chordPickerIndex", chordPickerIndexSelected)
 
         numOfBeatsSelected = savedState!!.getInt("numberOfBeatsSelected", numOfBeatsSelected)
         nextInputIndex = savedState!!.getInt("chordPickerIndex", nextInputIndex)
 
 
 
-        spChordPicker!!.setSelection(chordPickerIndexSelected)
         selectNote(numOfBeatsSelected)
 
 
-        updateChordsInCurrentlyPickedKey() //These actions are same as updateOnKeyOrScale change, but instead we must init the chordSpinner
-        initializeChordSpinner()
+        pickerManager?.updateChordsInCurrentlyPickedKey() //These actions are same as updateOnKeyOrScale change, but instead we must init the chordSpinner
+        pickerManager?.initializeChordSpinner()
     }
 
 
@@ -131,7 +119,7 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
 
     private fun initializeOnClickListeners() {
         initializeButtonListeners()
-        initializeListListeners()
+        pickerManager?.initPickerOnClickListeners()
     }
 
 
@@ -139,7 +127,6 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
 
     private fun initializeButtonViews() {
         //tvNotesDisplay = findViewById(R.id.chordsDisplay) as TextView
-        bAddButtonChordSelector = findViewById(R.id.AddButtonChordSelection) as TextView
         bPlayChordProgression = findViewById(R.id.bPlayChordProgression) as ImageView
         bGoToLogin = findViewById(R.id.bGoToLogin) as Button
 
@@ -161,39 +148,15 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
     }
 
     private fun initializeListViews() {
-        updateChordsInCurrentlyPickedKey()
-        initializeChordSpinner()
+        pickerManager?.updateChordsInCurrentlyPickedKey()
+        pickerManager?.initializeChordSpinner()
     }
 
-    /*Creates a dynamic spinner, call in onCreate and onResume*/
-    private fun initializeChordSpinner() {
-        spChordPicker = findViewById(R.id.chordPicker) as Spinner
-        chordListForDropDown = chordsInCurrentlyPickedKey!!.toCollection(ArrayList<String>())
-        chordAdapt = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, chordListForDropDown)
-        spChordPicker!!.adapter = chordAdapt
-        spChordPicker!!.setSelection(chordPickerIndexSelected)
-    }
 
 
                             /************* Listeners *************/
 
     private fun initializeButtonListeners() {
-
-        bAddButtonChordSelector!!.setOnClickListener {
-
-            if (chordsInProgression!!.size < 8) {
-                //Out of bounds check
-                if (nextInputIndex > chordsInProgression.size) //TODO:We need this check on the progressionbar onclicklistener
-                    nextInputIndex = chordsInProgression.size //TODO: We also need a delete function where the user can slide the progression bar to remove the view
-
-                chordsInProgression.add(nextInputIndex, ChordData(chordsInCurrentlyPickedKey!![chordPickerIndexSelected], numOfBeatsSelected, chordPickerIndexSelected + 1))
-                Log.v("ChordsIn/Key: ", printChordProgression())
-
-                nextInputIndex++ //Sets next input to end of bar just created
-
-                sendChordsToProgressionBar()
-            }
-        }
 
         bPlayChordProgression!!.setOnClickListener {
             if (threadProgressionBarPlayer != null && threadProgressionBarPlayer!!.isAlive)
@@ -233,18 +196,6 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
     }
 
 
-    private fun initializeListListeners() {
-        pickerManager?.initPickerOnClickListeners()
-
-        spChordPicker!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
-                chordPickerIndexSelected = pos
-                playChord(ChordData(chordsInCurrentlyPickedKey!![chordPickerIndexSelected], numOfBeatsSelected, chordPickerIndexSelected + 1), 500)
-            }
-            override fun onNothingSelected(parent: AdapterView<out Adapter>?) {}
-        }
-    }
-
 
 
 
@@ -253,30 +204,11 @@ class MainActivity : AppCompatActivity(), ProgressionManager.ProgressionFragment
 
     /*Call whenever key or scale is changed*/
     fun updateOnKeyOrScaleChange() {
-        updateChordsInCurrentlyPickedKey()
-        updateChordSpinner()
+        pickerManager?.updatePickersOnKeyOrScaleChange()
         updateIntervals();
         //updateNotesInKey()
     }
 
-    /*Updates the data array of the chords in the currently selected key/scale of the scale selection spinners*/
-    private fun updateChordsInCurrentlyPickedKey() {
-        val key = pickerManager?.spKeyPicker?.selectedItem.toString()
-        val scale = pickerManager?.spScalePicker?.selectedItem.toString()
-        chordsInCurrentlyPickedKey = chords.findChordsInKey(chords, key, scale)
-    }
-
-    /*Updates the chord spinner after the scale has been changed, must be called after updateChordsInCurrentlyPickedKey()*/
-    private fun updateChordSpinner() {
-        chordAdapt!!.clear()
-        for(str in chordsInCurrentlyPickedKey!!) {
-           chordAdapt!!.add(str)
-        }
-        chordAdapt!!.notifyDataSetChanged()
-
-        chordPickerIndexSelected = 0
-        spChordPicker!!.setSelection(chordPickerIndexSelected)
-    }
 
     private fun updateIntervals() {
         var newIntervalStrings: Array<String>? = null

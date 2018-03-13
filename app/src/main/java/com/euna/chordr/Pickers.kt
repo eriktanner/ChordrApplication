@@ -2,21 +2,21 @@ package com.euna.chordr
 
 import android.content.SharedPreferences
 import android.view.View
-import android.widget.Adapter
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
+import android.widget.*
 
 
 /**
- * This Class handles everything pertaining to playing
- * sound files
+ * This class handles everything pertaining to selecting the key and scale we are in, and the
+ * adding of the chords the users selects, and the saving of picker states
  */
 class Pickers(mainActivityIn: MainActivity) {
 
     internal var mainActivity: MainActivity? = null
     internal var savedState: SharedPreferences? = null
     internal val chords = Chords()
+
+    //Buttons
+    internal var bAddButtonChordSelector: TextView? = null
 
     //Key and Scale Pickers
     internal var spKeyPicker: Spinner? = null
@@ -25,6 +25,12 @@ class Pickers(mainActivityIn: MainActivity) {
     internal var scalePickerIndexSelected = 0
 
 
+    //ChordPicker
+    internal var spChordPicker: Spinner? = null
+    internal var chordAdapt: ArrayAdapter<String>? = null
+    internal var chordListForDropDown: List<String>? = null //Needed for dynamic changing
+    internal var chordsInCurrentlyPickedKey: Array<String>? = null
+    internal var chordPickerIndexSelected = 0
 
 
 
@@ -39,23 +45,25 @@ class Pickers(mainActivityIn: MainActivity) {
         val editor = savedState!!.edit()
         editor.putInt("keyPickerIndex", keyPickerIndexSelected)
         editor.putInt("scalePickerIndex", scalePickerIndexSelected)
-        //editor.putInt("chordPickerIndex", chordPickerIndexSelected)
+        editor.putInt("chordPickerIndex", chordPickerIndexSelected)
     }
 
     /*Reinstates indices of our Pickers, for use on OnResume()*/
     fun reinstateSavedPickerIndices () {
         keyPickerIndexSelected = savedState!!.getInt("keyPickerIndex", keyPickerIndexSelected)
         scalePickerIndexSelected = savedState!!.getInt("scalePickerIndex", scalePickerIndexSelected)
-        //chordPickerIndexSelected = savedState!!.getInt("chordPickerIndex", chordPickerIndexSelected)
+        //chordPickerIndexSelected = savedState.getInt("chordPickerIndex", chordPickerIndexSelected)
 
-        spKeyPicker!!.setSelection(keyPickerIndexSelected)
-        spScalePicker!!.setSelection(scalePickerIndexSelected)
-        //spChordPicker!!.setSelection(chordPickerIndexSelected)
+        spKeyPicker?.setSelection(keyPickerIndexSelected)
+        spScalePicker?.setSelection(scalePickerIndexSelected)
+        spChordPicker?.setSelection(chordPickerIndexSelected)
     }
 
 
     /*Constructs Picker Views and sets to initial state*/
     fun initPickerListViews() {
+        bAddButtonChordSelector = mainActivity?.findViewById(R.id.AddButtonChordSelection) as TextView
+
         spKeyPicker = mainActivity?.findViewById(R.id.keyPicker) as Spinner
         val keyAdapt = ArrayAdapter(mainActivity, R.layout.support_simple_spinner_dropdown_item, chords.notes)
         spKeyPicker!!.adapter = keyAdapt
@@ -71,7 +79,24 @@ class Pickers(mainActivityIn: MainActivity) {
 
     /*Constructs Picker OnClickListeners*/
     fun initPickerOnClickListeners() {
-        spKeyPicker!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        bAddButtonChordSelector!!.setOnClickListener {
+
+            if (mainActivity?.chordsInProgression!!.size < 8) {
+                //Out of bounds check
+                if (mainActivity?.nextInputIndex!! > mainActivity?.chordsInProgression!!.size) //TODO:We need this check on the progressionbar onclicklistener
+                    mainActivity?.nextInputIndex = mainActivity?.chordsInProgression!!.size //TODO: We also need a delete function where the user can slide the progression bar to remove the view
+
+                var chordIndex = chordPickerIndexSelected
+                mainActivity?.chordsInProgression!!.add(mainActivity?.nextInputIndex!!, ChordData(chordsInCurrentlyPickedKey!![chordIndex!!], mainActivity?.numOfBeatsSelected!!, chordIndex + 1))
+                //Log.v("ChordsIn/Key: ", printChordProgression())
+
+                mainActivity!!.nextInputIndex++ //Sets next input to end of bar just created
+
+                mainActivity?.sendChordsToProgressionBar()
+            }
+        }
+
+        spKeyPicker?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
                 keyPickerIndexSelected = pos
                 mainActivity?.updateOnKeyOrScaleChange()
@@ -79,7 +104,7 @@ class Pickers(mainActivityIn: MainActivity) {
             override fun onNothingSelected(parent: AdapterView<out Adapter>?) {}
         }
 
-        spScalePicker!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        spScalePicker?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
                 scalePickerIndexSelected = pos
                 mainActivity?.updateOnKeyOrScaleChange()
@@ -87,23 +112,24 @@ class Pickers(mainActivityIn: MainActivity) {
             override fun onNothingSelected(parent: AdapterView<out Adapter>?) {}
         }
 
-        /*spChordPicker!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        spChordPicker?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
                 chordPickerIndexSelected = pos
                 mainActivity?.playChord(ChordData(chordsInCurrentlyPickedKey!![chordPickerIndexSelected], mainActivity!!.numOfBeatsSelected, chordPickerIndexSelected + 1), 500)
             }
             override fun onNothingSelected(parent: AdapterView<out Adapter>?) {}
-        }*/
+        }
     }
 
     /*Creates a dynamic spinner, call in onCreate and onResume*/
-    public fun initializeChordSpinner() {
-        /*spChordPicker = mainActivity?.findViewById(R.id.chordPicker) as Spinner
+    fun initializeChordSpinner() {
+        spChordPicker = mainActivity?.findViewById(R.id.chordPicker) as Spinner
         chordListForDropDown = chordsInCurrentlyPickedKey!!.toCollection(ArrayList<String>())
         chordAdapt = ArrayAdapter(mainActivity, R.layout.support_simple_spinner_dropdown_item, chordListForDropDown)
-        spChordPicker!!.adapter = chordAdapt
-        spChordPicker!!.setSelection(chordPickerIndexSelected)*/
+        spChordPicker?.adapter = chordAdapt
+        spChordPicker?.setSelection(chordPickerIndexSelected)
     }
+
 
 
 
@@ -118,19 +144,20 @@ class Pickers(mainActivityIn: MainActivity) {
     fun updateChordsInCurrentlyPickedKey() {
         val key = spKeyPicker?.selectedItem.toString()
         val scale = spScalePicker?.selectedItem.toString()
-        //chordsInCurrentlyPickedKey = chords.findChordsInKey(chords, key, scale)
+        chordsInCurrentlyPickedKey = chords.findChordsInKey(chords, key, scale)
     }
 
     /*Updates the ChordSpinner after the scale has been changed, must be called after updateChordsInCurrentlyPickedKey()*/
     fun updateChordSpinner() {
-        /*chordAdapt!!.clear()
+        chordAdapt!!.clear()
         for(str in chordsInCurrentlyPickedKey!!) {
             chordAdapt!!.add(str)
         }
         chordAdapt!!.notifyDataSetChanged()
+        //Log.v("updateChordSpinner", "HERE")
 
         chordPickerIndexSelected = 0
-        spChordPicker!!.setSelection(chordPickerIndexSelected)*/
+        spChordPicker!!.setSelection(chordPickerIndexSelected)
     }
 
 
